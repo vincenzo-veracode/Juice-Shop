@@ -1,0 +1,34 @@
+name: Veracode Upload and Scan
+
+on:
+  push:
+    branches:
+      - main  # Trigger on push to the main branch
+  pull_request:
+    branches:
+      - main  # Trigger on pull requests to the main branch
+
+jobs:
+  veracode-scan:
+    runs-on: ubuntu-latest  # You can also choose 'windows-latest' or other environments
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3  # Checkout the repository
+
+      - name: Veracode Upload And Scan
+        uses: veracode/veracode-uploadandscan-action@0.2.6
+        with:
+          appname: ${{ github.repository }}  # Set app name or use the default
+          createprofile: false
+          filepath: "./path/to/your/build.zip"  # Specify the path to the zipped code or build
+          version: ${{ github.run_id }}-${{ github.run_number }}-${{ github.run_attempt }}  # Unique version based on GitHub context
+          vid: ${{ secrets.VERACODE_ID }}  # Veracode ID stored in GitHub Secrets
+          vkey: ${{ secrets.VERACODE_KEY }}  # Veracode key stored in GitHub Secrets
+          createsandbox: false  # Optional, remove if not needed
+          scantimeout: 60  # Optional, specify scan timeout in minutes
+          exclude: ""  # Optional, specify files to exclude, or remove
+          include: ""  # Optional, specify files to include, or remove
+          criticality: "High"  # Optional, specify policy criticality (e.g., High, Medium)
+          scanpollinginterval: 120  # Polling interval for scan status (default: 120 seconds)
+          debug: false  # Optional, set to true for debug logs
+          includenewmodules: true  # Optional, include new top-level modules
