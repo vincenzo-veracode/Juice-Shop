@@ -1,4 +1,4 @@
-            - name: Veracode Upload And Scan
+             name: Veracode Upload And Scan
   # You may pin to the exact commit or the version.
   # uses: veracode/veracode-uploadandscan-action@98e2a2941b985e55bfe469ebcb970b2e686625e4
   uses: veracode/veracode-uploadandscan-action@0.2.6
