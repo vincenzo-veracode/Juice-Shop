@@ -1,40 +1,61 @@
 name: Veracode Upload And Scan
 
-on: [push]
+on:
+  push:
+    branches:
+      - main
 
 jobs:
-  upload-and-scan:
+  veracode-scan:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout code
+      - name: Checkout repository
         uses: actions/checkout@v2
+
+      - name: Set up JDK 11
+        uses: actions/setup-java@v2
+        with:
+          distribution: 'temurin'
+          java-version: '11'
 
       - name: Veracode Upload and Scan
         uses: veracode/veracode-uploadandscan-action@0.2.6
         with:
-          appname: ${{ github.repository }} # Replace with your app name if necessary
+          # Required parameters
+          appname: Vince-Hinojosa-Veracode/Juice-Shop
           createprofile: true
-          filepath: ./path/to/artifact.zip # Specify the file path here
-          version: ${{ github.run_id }}-${{ github.run_number }}-${{ github.run_attempt }} # Or specify your version
-          vid: ${{ secrets.VERACODE_API_ID }} # Add your Veracode API ID
-          vkey: ${{ secrets.VERACODE_API_KEY }} # Add your Veracode API key
-          createsandbox: false # Optional
-          sandboxname: "" # Optional
-          scantimeout: 60 # Optional, replace with a timeout value
-          exclude: "" # Optional, specify modules to exclude
-          include: "" # Optional, specify modules to include
-          criticality: "Medium" # Optional, define the business criticality
-          pattern: "" # Optional, specify filename pattern
-          replacement: "" # Optional, specify replacement
-          sandboxid: "" # Optional, sandbox ID
-          scanallnonfataltoplevelmodules: false # Optional
-          selected: "" # Optional, specify selected modules
-          selectedpreviously: "" # Optional, specify previously selected modules
-          teams: "" # Optional, specify teams
-          toplevel: "" # Optional, specify top-level modules
-          deleteincompletescan: true # Optional
-          scanpollinginterval: 120 # Optional, set polling interval between 30-120 seconds
-          javawrapperversion: "latest" # Optional, specify Java API wrapper version
-          debug: false # Optional, set to true to enable debug output
-          includenewmodules: true # Optional, select new modules automatically
+          filepath: ./path/to/artifact.zip
+          version: ${{ github.run_id }}-${{ github.run_number }}
+          vid: ${{ secrets.VERACODE_API_ID }}
+          vkey: ${{ secrets.VERACODE_API_KEY }}
+
+          # Optional parameters
+          createsandbox: false
+          scantimeout: 60
+          criticality: Medium
+          deleteincompletescan: true
+          scanpollinginterval: 120
+          javawrapperversion: latest
+          debug: false
+          includenewmodules: true
+          
+      - name: Verify Veracode Scan
+        run: |
+          java -jar VeracodeJavaAPI.jar \
+            -filepath ./path/to/artifact.zip \
+            -version "${{ github.run_id }}-${{ github.run_number }}" \
+            -action "uploadandscan" \
+            -appname "Vince-Hinojosa-Veracode/Juice-Shop" \
+            -vid "${{ secrets.VERACODE_API_ID }}" \
+            -vkey "${{ secrets.VERACODE_API_KEY }}" \
+            -createsandbox "false" \
+            -scantimeout "60" \
+            -autoscan "true" \
+            -criticality "Medium" \
+            -scanallnonfataltoplevelmodules "false" \
+            -deleteincompletescan "true" \
+            -scanpollinginterval "120" \
+            -createprofile "true" \
+            -includenewmodules "true" \
+            -debug "false"
