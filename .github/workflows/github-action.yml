@@ -1,0 +1,40 @@
+name: Veracode Upload And Scan
+
+on: [push]
+
+jobs:
+  upload-and-scan:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Veracode Upload and Scan
+        uses: veracode/veracode-uploadandscan-action@0.2.6
+        with:
+          appname: ${{ github.repository }} # Replace with your app name if necessary
+          createprofile: true
+          filepath: ./path/to/artifact.zip # Specify the file path here
+          version: ${{ github.run_id }}-${{ github.run_number }}-${{ github.run_attempt }} # Or specify your version
+          vid: ${{ secrets.VERACODE_API_ID }} # Add your Veracode API ID
+          vkey: ${{ secrets.VERACODE_API_KEY }} # Add your Veracode API key
+          createsandbox: false # Optional
+          sandboxname: "" # Optional
+          scantimeout: 60 # Optional, replace with a timeout value
+          exclude: "" # Optional, specify modules to exclude
+          include: "" # Optional, specify modules to include
+          criticality: "Medium" # Optional, define the business criticality
+          pattern: "" # Optional, specify filename pattern
+          replacement: "" # Optional, specify replacement
+          sandboxid: "" # Optional, sandbox ID
+          scanallnonfataltoplevelmodules: false # Optional
+          selected: "" # Optional, specify selected modules
+          selectedpreviously: "" # Optional, specify previously selected modules
+          teams: "" # Optional, specify teams
+          toplevel: "" # Optional, specify top-level modules
+          deleteincompletescan: true # Optional
+          scanpollinginterval: 120 # Optional, set polling interval between 30-120 seconds
+          javawrapperversion: "latest" # Optional, specify Java API wrapper version
+          debug: false # Optional, set to true to enable debug output
+          includenewmodules: true # Optional, select new modules automatically
